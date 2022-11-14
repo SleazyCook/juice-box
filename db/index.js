@@ -213,31 +213,6 @@ async function addTagsToPost(postId, tagList) {
   }
 }
 
-// async function updatePost(id, fields = {}) {
-//   // build the set string
-//   const setString = Object.keys(fields).map(
-//     (key, index) => `"${ key }"=$${ index + 1 }`
-//   ).join(', ');
-
-//   // return early if this is called without fields
-//   if (setString.length === 0) {
-//     return;
-//   }
-
-//   try {
-//     const { rows: [ post ] } = await client.query(`
-//       UPDATE posts
-//       SET ${ setString }
-//       WHERE id=${ id }
-//       RETURNING *;
-//     `, Object.values(fields));
-
-//     return post;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
 async function updatePost(postId, fields = {}) {
   // read off the tags & remove that field 
   const { tags } = fields; // might be undefined
@@ -455,6 +430,14 @@ async function createPostTag(postId, tagId) {
   }
 }
 
+async function getAllTags(){
+  const {rows} = await client.query(
+    `SELECT * FROM tags;`
+  )
+  console.log("all tags", rows);
+  return rows;
+}
+
 async function testDB() {
   try {
     console.log("Starting to test database...");
@@ -501,6 +484,20 @@ async function testDB() {
   }
 }
 
+async function getUserByUsername(username) {
+  try {
+    const { rows: [user] } = await client.query(`
+      SELECT *
+      FROM users
+      WHERE username=$1;
+    `, [username]);
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function rebuildDB() {
   try {
     client.connect();
@@ -513,6 +510,7 @@ async function rebuildDB() {
     await createInitialTags();
     await createTags(['#string', '#strings', '#stringy']);
     await testDB;
+    // console.log(testDB())
     
   } catch (error) {
     console.log("Error during rebuildDB")
@@ -524,5 +522,28 @@ async function rebuildDB() {
 }
 
 module.exports = {
-  rebuildDB
-}
+  // rebuildDB is used for seed.js
+  rebuildDB,
+  // exporting everything to be imported to files outside of DB
+  client, //definitely using this on juicebox/index.js
+  createUser,
+  updateUser,
+  getAllUsers, //definitely using on juicebox/api/users.js
+  getUserById,
+  getPostsByUser,
+  getPostById,
+  getPostsByTagName,
+  createPost,
+  createTags,
+  addTagsToPost,
+  updatePost,
+  getAllPosts, //definitely using on juicebox/api/posts.js
+  dropTables,
+  createTables,
+  createInitialUsers,
+  createInitialPosts,
+  createInitialTags,
+  createPostTag,
+  getAllTags, //definite using on juicebox/api/tags.js
+  getUserByUsername
+};
