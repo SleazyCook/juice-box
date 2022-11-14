@@ -23,6 +23,20 @@ app.use('/api', apiRouter);
 
 client.connect();
 
+app.get('/background/:color', (req, res, next) => {
+  res.send(`
+    <body style="background: ${ req.params.color };">
+      <h1>Hello World</h1>
+    </body>
+  `);
+});
+
+app.get('/add/:first/to/:second', (req, res, next) => {
+  res.send(`<h1>${ req.params.first } + ${ req.params.second } = ${
+    Number(req.params.first) + Number(req.params.second)
+   }</h1>`);
+});
+
 // looking for LITERALLY ANYTHING. first test
 // app.use((req, res, next) =>  {
 //   console.log("<___Body Logger___>");
