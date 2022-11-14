@@ -15,6 +15,7 @@ apiRouter.use(async(req, res, next) =>{
   const auth = req.header('Authorization');
   // auth required to continue
   if(!auth){
+    res.send("Invalid Credentials");
     next();
   } else if (auth.startsWith(prefix)){
     const token = auth.slice(prefix.length); //prefix.length=7=BEARER.length

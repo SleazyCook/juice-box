@@ -3,6 +3,20 @@ const postsRouter = express.Router();
 const { requireUser } = require('./utility');
 const {getAllPosts, updatePost, getPostById, createPost} = require('../db');
 
+// postsRouter.get('/', async(req, res, next) =>{
+//   try {
+//     const allPosts = await getAllPosts;
+
+//   } catch ({name, message}){
+
+//   }
+//   // const posts = await getAllPosts();
+//   // console.log('where am i')
+//   // res.send({
+//   //   posts
+//   // });
+// });
+
 postsRouter.post('/', requireUser, async (req, res, next) => {
   const {title, content, tags = ""} = req.body;
   const tagArr = tags.trim().split(/\s+/);
@@ -60,12 +74,5 @@ postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
   }
 });
 
-postsRouter.get('/', async(req, res) =>{
-  const posts = await getAllPosts();
-  console.log('where am i')
-  res.send({
-    posts
-  });
-});
 
 module.exports = postsRouter;
