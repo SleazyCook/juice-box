@@ -1,20 +1,14 @@
-// JWT
-const jwt = require('jsonwebtoken');
-const {JWT_SECRET} = process.env;
-const {getUserById} = require('../db')
-
 // API ROUTER
 // api/index.js
 const express = require('express');
 const apiRouter = express.Router();
 
-const usersRouter = require('./users');
-const postsRouter = require('./posts');
-const tagsRouter = require('./tags');
+// JWT
+const jwt = require('jsonwebtoken');
+const {JWT_SECRET} = process.env;
+require('dotenv').config();
 
-apiRouter.use('/users', usersRouter);
-apiRouter.use('/posts', postsRouter);
-apiRouter.use('/tags', tagsRouter);
+const {getUserById, createUser} = require('../db')
 
 apiRouter.use(async(req, res, next) =>{
   const prefix = "Bearer";
@@ -41,6 +35,26 @@ apiRouter.use(async(req, res, next) =>{
     })
   }
 });
+
+apiRouter.use((req, res, next) => {
+  if (req.user) {
+    console.log("User is set:", req.user);
+  }
+
+  next();
+});
+
+const usersRouter = require('./users');
+const postsRouter = require('./posts');
+const tagsRouter = require('./tags');
+
+apiRouter.use('/users', usersRouter);
+apiRouter.use('/posts', postsRouter);
+apiRouter.use('/tags', tagsRouter);
+
+
+
+
 
 apiRouter.use((error, req, res, next)=>{
   res.send({
